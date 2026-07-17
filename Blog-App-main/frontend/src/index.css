@@ -1,0 +1,8 @@
+/* Clear existing styles - global.css will handle all styling */
+
+/* Only keep minimal resets if needed */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

@@ -1,0 +1,83 @@
+// Article card with design system theme
+import { Link } from 'react-router-dom';
+
+export default function ArticleCard({ article }) {
+  const {
+    _id, title, content, coverImage, image, category,
+    author, createdAt, readTime,
+  } = article;
+
+  const initials = author?.name
+    ? author.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    : 'AU';
+
+  const date = createdAt
+    ? new Date(createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+
+  // Create excerpt from content if not provided
+  const excerpt = content ? content.slice(0, 120) + '...' : '';
+
+  return (
+    <Link to={`/article/${_id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
+      <article className="card article-card" style={{ width: '100%' }}>
+        <div className="article-card__image">
+          {coverImage || image
+            ? <img src={coverImage || image} alt={title} loading="lazy" />
+            : <PlaceholderCover title={title} />}
+        </div>
+
+        <div className="article-card__content">
+          {category && (
+            <span className="badge badge-rose">{category}</span>
+          )}
+
+          <h3 className="article-card__title">{title}</h3>
+
+          {excerpt && (
+            <p className="article-card__excerpt">{excerpt}</p>
+          )}
+
+          <div className="article-card__footer">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+              <div className="avatar avatar-sm avatar-rose">{initials}</div>
+              <div>
+                <p style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                  {author?.name ?? 'Unknown'}
+                </p>
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>{date}</p>
+              </div>
+            </div>
+            {readTime && (
+              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
+                {readTime} min read
+              </span>
+            )}
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}
+
+function PlaceholderCover({ title }) {
+  const colors = [
+    ['var(--rose-light)', 'var(--sky-light)'],
+    ['var(--sky-light)', 'var(--mint-light)'],
+    ['var(--mint-light)', 'var(--cream-light)'],
+    ['var(--cream-light)', 'var(--rose-light)'],
+  ];
+  const pair = colors[(title?.length ?? 0) % colors.length];
+
+  return (
+    <div style={{
+      width: '100%', height: '100%',
+      background: `linear-gradient(135deg, ${pair[0]} 0%, ${pair[1]} 100%)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: '2rem', color: 'var(--text-muted)', fontFamily: 'var(--font-display)',
+      fontStyle: 'italic', padding: 'var(--sp-6)', textAlign: 'center',
+    }}>
+      {title?.slice(0, 2) ?? 'Bl'}
+    </div>
+  );
+}
